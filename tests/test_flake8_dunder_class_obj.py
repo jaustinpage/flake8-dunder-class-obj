@@ -21,7 +21,8 @@ def test_flake8_dunder_class_obj_plugin_attrs():
     assert flake8_dunder_class_obj.Plugin.version.startswith("0.1.")
 
 
-MSG = "DCO100: class objects should not begin with __ unless name mangling desired"
+message = "DCO100: class objects should not begin with __ unless name mangling desired"
+plugin_type = type(flake8_dunder_class_obj.Plugin(ast.parse("")))
 
 
 @pytest.mark.parametrize(
@@ -30,8 +31,15 @@ MSG = "DCO100: class objects should not begin with __ unless name mangling desir
         ("", set()),
         (
             "class Test:\n    __var = 1",
-            {(2, 4, MSG, type(flake8_dunder_class_obj.Plugin(ast.parse(""))))},
+            {(2, 4, message, plugin_type)},
         ),
+        (
+            "class Test:\n    def __init__(self):\n        self.__wut_ = 1",
+            {(3, 13, message, plugin_type)},
+        ),
+        ('getattr(self, "__test")', {(1, 14, message, plugin_type)}),
+        ("test.__func()", {(1, 4, message, plugin_type)}),
+        ("class Test:\n    def __init__(self):\n        self._wut_ = 1", set()),
         ("class Test:\n    pass", set()),
         ("class Test:\n    var = 1", set()),
         ("class Test:\n    __myvar__ = 1", set()),
