@@ -38,6 +38,7 @@ plugin_type = type(flake8_dunder_class_obj.Plugin(ast.parse("")))
             {(3, 13, message, plugin_type)},
         ),
         ('getattr(self, "__test")', {(1, 14, message, plugin_type)}),
+        ('hasattr(self, "__test")', {(1, 14, message, plugin_type)}),
         ("test.__func()", {(1, 4, message, plugin_type)}),
         ("class Test:\n    def __init__(self):\n        self._wut_ = 1", set()),
         ("class Test:\n    pass", set()),

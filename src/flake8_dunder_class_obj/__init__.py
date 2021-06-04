@@ -60,12 +60,12 @@ class Visitor(ast.NodeVisitor):
 
     def visit_Call(self: "Visitor", node: ast.Call) -> None:  # noqa: N802
         """
-        Visit each Call.t
+        Visit each Call.
 
         If the call is getattr(self, "__dundervar_"), flag it
         :param node: The ast Call node
         """
-        if type(node.func) == ast.Name and node.func.id == "getattr":
+        if type(node.func) == ast.Name and node.func.id in ["getattr", "hasattr"]:
             for arg in node.args:
                 if type(arg) == ast.Constant and self._check_string(arg.value):
                     self.problems.append((arg.lineno, arg.col_offset))
