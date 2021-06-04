@@ -14,5 +14,5 @@ message:
 `DCO100: class objects should not begin with __ unless name mangling is desired`
 
 See:
-[Python private varialbes](https://docs.python.org/3/tutorial/classes.html#private-variables)
+[Python private variables](https://docs.python.org/3/tutorial/classes.html#private-variables)
 for more information about name mangling.
