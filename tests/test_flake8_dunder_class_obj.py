@@ -13,12 +13,12 @@ import flake8_dunder_class_obj
 
 def test_flake8_dunder_class_obj_version():
     """Check __version__."""
-    assert flake8_dunder_class_obj.__version__.startswith("0.0.")
+    assert flake8_dunder_class_obj.__version__.startswith("0.1.")
 
 
 def test_flake8_dunder_class_obj_plugin_attrs():
     assert flake8_dunder_class_obj.Plugin.name == "flake8_dunder_class_obj"
-    assert flake8_dunder_class_obj.Plugin.version.startswith("0.0.")
+    assert flake8_dunder_class_obj.Plugin.version.startswith("0.1.")
 
 
 MSG = "DCO100: class objects should not begin with __ unless name mangling desired"

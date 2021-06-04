@@ -31,3 +31,11 @@ release:
 	pip install --upgrade wheel build
 	rm -rf build/* dist/*
 	python -m build
+
+pypitest:
+	pip install --upgrade twine
+	python3 -m twine upload --repository testpypi dist/*
+
+pypi:
+	pip install --upgrade twine
+	python3 -m twine upload dist/*
