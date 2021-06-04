@@ -1,3 +1,5 @@
 autouse
+ClassDef
 dunder
 func
+lineno
