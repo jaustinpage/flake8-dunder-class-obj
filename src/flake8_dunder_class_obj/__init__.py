@@ -18,7 +18,7 @@ class Visitor(ast.NodeVisitor):
         self.problems: List[Tuple[int, int]] = []
 
     @staticmethod
-    def _check_string(string_to_check: str) -> bool:
+    def _can_mangle(string_to_check: str) -> bool:
         if string_to_check.startswith("__") and not string_to_check.endswith("__"):
             return True
         return False
@@ -33,29 +33,19 @@ class Visitor(ast.NodeVisitor):
         for n in node.body:
             if type(n) == ast.Assign:
                 for target in n.targets:
-                    if (
-                        type(target) == ast.Name
-                        and str(target.id).startswith("__")
-                        and not str(target.id).endswith("__")
-                    ):
+                    if type(target) == ast.Name and self._can_mangle(target.id):
                         self.problems.append((target.lineno, target.col_offset))
         self.generic_visit(node)
 
-    def visit_Assign(self: "Visitor", node: ast.Assign) -> None:  # noqa: N802
+    def visit_Attribute(self: "Visitor", node: ast.Attribute) -> None:  # noqa: N802
         """
         Visit each Attribute.
 
-        If it is a double underscore, flag it.
-        :param node:  The ast Attribute node
+        flag double unders
+        :param node: the ast Attribute node
         """
-        for target in node.targets:
-            if (
-                type(target) == ast.Attribute
-                and type(target.value) == ast.Name
-                and target.value.id == "self"
-                and self._check_string(target.attr)
-            ):
-                self.problems.append((target.lineno, target.value.end_col_offset + 1))
+        if self._can_mangle(node.attr):
+            self.problems.append((node.lineno, node.value.end_col_offset + 1))
         self.generic_visit(node)
 
     def visit_Call(self: "Visitor", node: ast.Call) -> None:  # noqa: N802
@@ -67,11 +57,8 @@ class Visitor(ast.NodeVisitor):
         """
         if type(node.func) == ast.Name and node.func.id in ["getattr", "hasattr"]:
             for arg in node.args:
-                if type(arg) == ast.Constant and self._check_string(arg.value):
+                if type(arg) == ast.Constant and self._can_mangle(arg.value):
                     self.problems.append((arg.lineno, arg.col_offset))
-
-        if type(node.func) == ast.Attribute and self._check_string(node.func.attr):
-            self.problems.append((node.func.lineno, node.func.value.end_col_offset))
         self.generic_visit(node)
 
 
